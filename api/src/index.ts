@@ -7,6 +7,8 @@ const errorHandler = require('./middleware/errorHandler');
 
 app.use(express.json());
 
+app.use('/api/highscore', require('./route/highscoreRoute'));
+
 app.use(errorHandler);
 
 app.listen(PORT, () => console.log(`Server running on port: ${PORT}`));
