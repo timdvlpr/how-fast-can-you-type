@@ -4,8 +4,18 @@ import { AppDataSource } from './data-source';
 const app = express();
 const PORT = 5000;
 const errorHandler = require('./middleware/errorHandler');
+const cors = require('cors');
 
 app.use(express.json());
+app.use(
+  cors({
+    origin:
+      process.env.NODE_ENV === 'production'
+        ? 'productionOrigin'
+        : 'http://localhost:3000',
+    optionsSuccessStatus: 200
+  })
+);
 
 app.use('/api/highscore', require('./route/highscoreRoute'));
 
