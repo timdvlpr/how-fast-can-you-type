@@ -1,0 +1,51 @@
+version: '3.7'
+
+services:
+
+  postgres:
+    image: postgres
+    restart: unless-stopped
+    container_name: postgres
+    environment:
+      - POSTGRES_DB=test
+      - POSTGRES_USER=test
+      - POSTGRES_PASSWORD=test
+    volumes:
+      - dbdata:/var/lib/postgresql/data
+    networks:
+      - db
+
+  backend:
+    build:
+      context: ./api
+      target: development
+    restart: unless-stopped
+    container_name: backend
+    depends_on:
+      - postgres
+    ports:
+      - '5000:5000'
+    volumes:
+      - './api:/app'
+    networks:
+      - db
+
+  frontend:
+    build:
+      context: ./client
+      target: development
+    restart: unless-stopped
+    container_name: frontend
+    depends_on:
+      - backend
+    ports:
+      - '3000:3000'
+    volumes:
+      - './client:/app'
+      - '/app/node_modules'
+
+volumes:
+  dbdata:
+
+networks:
+  db:
