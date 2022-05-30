@@ -7,10 +7,11 @@ import {
   faKeyboard,
   faClock,
   faAngleUp,
+  faLanguage,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
-library.add(faStar, faKeyboard, faClock, faAngleUp);
+library.add(faStar, faKeyboard, faClock, faAngleUp, faLanguage);
 
 const app = createApp(App);
 
