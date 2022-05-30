@@ -2,6 +2,11 @@ body {
   font-family: 'Roboto', sans-serif;
 }
 
+.words {
+  font-family: 'Courier New', serif;
+  font-size: 2rem;
+}
+
 h1, h2, h3, h4, a, p, span {
   color: $light;
 }

@@ -2,10 +2,15 @@ import { createApp } from "vue";
 import App from "./App.vue";
 import router from "./router";
 import { library } from "@fortawesome/fontawesome-svg-core";
-import { faStar, faKeyboard, faClock } from "@fortawesome/free-solid-svg-icons";
+import {
+  faStar,
+  faKeyboard,
+  faClock,
+  faAngleUp,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
-library.add(faStar, faKeyboard, faClock);
+library.add(faStar, faKeyboard, faClock, faAngleUp);
 
 const app = createApp(App);
 
