@@ -29,7 +29,12 @@ const currentSelectedLanguage = computed(() => {
 
 <template>
   <div class="selected-language">
-    <button @click="showLanguageOptions()" v-if="!languageOptionsVisible">
+    <button
+      class="selected-language-btn"
+      :class="{ blink: !props.selectedLanguage }"
+      @click="showLanguageOptions()"
+      v-if="!languageOptionsVisible"
+    >
       <font-awesome-icon icon="language" />
       {{ currentSelectedLanguage }}
     </button>
@@ -70,5 +75,19 @@ const currentSelectedLanguage = computed(() => {
 }
 .selected {
   background: $accent !important;
+}
+.blink {
+  animation: blink 2s infinite linear;
+}
+@keyframes blink {
+  0% {
+    background: $main;
+  }
+  50% {
+    background: $accent;
+  }
+  100% {
+    background: $main;
+  }
 }
 </style>
