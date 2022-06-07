@@ -18,6 +18,7 @@ app.use(
 );
 
 app.use('/api/highscore', require('./route/highscoreRoute'));
+app.use('/api/words', require('./route/wordRoute'));
 
 app.use(errorHandler);
 
