@@ -15,9 +15,15 @@ const props = defineProps<{
 const wordsWrapperRef = ref<HTMLDivElement | null>(null);
 
 function handleKeyPress(key: KeyboardEvent): void {
+  if (props.timerTimeout) {
+    return;
+  }
   emit("keyPressed", key.key);
 }
 function refocus(): void {
+  if (props.timerTimeout) {
+    return;
+  }
   setTimeout(() => {
     if (wordsWrapperRef.value) {
       wordsWrapperRef.value.focus();
