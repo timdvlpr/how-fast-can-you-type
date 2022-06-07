@@ -52,13 +52,13 @@ watch(wordsWrapperRef, () => {
         }"
       >
         {{ character }}
-        <span
-          class="animatedCharacter"
-          v-for="character in props.animatedCharacters"
-          v-if="index === 0"
-        >
-          {{ character }}
-        </span>
+      </span>
+      <span
+        class="animatedCharacter"
+        :class="{ false: animatedCharacter === 'false' }"
+        v-for="animatedCharacter in props.animatedCharacters"
+      >
+        {{ animatedCharacter !== "false" ? animatedCharacter : "x" }}
       </span>
     </div>
     <div class="words-marker">
@@ -112,6 +112,9 @@ watch(wordsWrapperRef, () => {
 }
 .active {
   font-weight: bold;
+}
+.false {
+  color: $accent;
 }
 @keyframes moveUp {
   from {
