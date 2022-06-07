@@ -1,6 +1,8 @@
 import { createApp } from "vue";
 import App from "./App.vue";
 import router from "./router";
+import axios from "axios";
+import VueAxios from "vue-axios";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import {
   faStar,
@@ -16,6 +18,7 @@ library.add(faStar, faKeyboard, faClock, faAngleUp, faLanguage);
 const app = createApp(App);
 
 app.use(router);
+app.use(VueAxios, axios);
 app.component("font-awesome-icon", FontAwesomeIcon);
 
 app.mount("#app");
