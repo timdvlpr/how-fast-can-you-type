@@ -128,52 +128,56 @@ const buttonTitle = computed(() => {
 </script>
 
 <template>
-  <div class="container" v-if="!timerTimeout">
-    <div class="container-action-bar">
-      <AppButton
-        @click="setScoreCheckMode"
-        v-if="selectedLanguage"
-        :selected="checkForScore"
-        :title="buttonTitle"
-        text=""
-        icon="globe"
-      />
-      <LanguageSelection
-        :selected-language="selectedLanguage"
-        v-on:select-language="selectLanguage($event)"
-      />
-      <AppButton
-        v-if="selectedLanguage"
-        text=""
-        icon="rotate-right"
-        @click="restart"
-      />
-    </div>
+  <div>
+    <Transition name="bounce">
+      <div class="container" v-if="!timerTimeout">
+        <div class="container-action-bar">
+          <AppButton
+            @click="setScoreCheckMode"
+            v-if="selectedLanguage"
+            :selected="checkForScore"
+            :title="buttonTitle"
+            text=""
+            icon="globe"
+          />
+          <LanguageSelection
+            :selected-language="selectedLanguage"
+            v-on:select-language="selectLanguage($event)"
+          />
+          <AppButton
+            v-if="selectedLanguage"
+            text=""
+            icon="rotate-right"
+            @click="restart"
+          />
+        </div>
 
-    <div class="container-words">
-      <Type
-        v-if="selectedLanguage"
-        :words="generatedWords"
-        :animated-characters="animatedCharacters"
-        :timer-timeout="timerTimeout"
-        v-on:keyPressed="handleKeypress"
-        v-on:typingStarted="handleTypeStart"
-      />
-    </div>
+        <div class="container-words">
+          <Type
+            v-if="selectedLanguage"
+            :words="generatedWords"
+            :animated-characters="animatedCharacters"
+            :timer-timeout="timerTimeout"
+            v-on:keyPressed="handleKeypress"
+            v-on:typingStarted="handleTypeStart"
+          />
+        </div>
 
-    <Timer
-      v-if="selectedLanguage"
-      :timer-started="timerStarted"
-      v-on:timeout="handleTimeout"
-    />
+        <Timer
+          v-if="selectedLanguage"
+          :timer-started="timerStarted"
+          v-on:timeout="handleTimeout"
+        />
+      </div>
+    </Transition>
+
+    <Transition name="bounce">
+      <div class="container-timeout" v-if="timerTimeout">
+        <TypeResult :result="typeData" />
+        <AppButton v-on:click="restart" text="Restart" icon="rotate-right" />
+      </div>
+    </Transition>
   </div>
-
-  <Transition name="bounce">
-    <div class="container-timeout" v-if="timerTimeout">
-      <TypeResult :result="typeData" />
-      <AppButton v-on:click="restart" text="Restart" icon="rotate-right" />
-    </div>
-  </Transition>
 </template>
 
 <style lang="scss">
@@ -193,9 +197,6 @@ const buttonTitle = computed(() => {
 }
 .bounce-enter-active {
   animation: bounce-in 0.5s;
-}
-.bounce-leave-active {
-  animation: bounce-in 0.5s reverse;
 }
 @keyframes bounce-in {
   0% {
