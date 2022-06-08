@@ -2,9 +2,11 @@
 import { reactive, ref } from "vue";
 import Timer from "../components/Timer.vue";
 import Type from "../components/Type.vue";
+import TypeResult from "../components/TypeResult.vue";
 import LanguageSelection from "../components/LanguageSelection.vue";
 import type { Language } from "@/enums/Language";
 import { getWords } from "@/services/wordService";
+import type { Result } from "@/interfaces/Result";
 
 const timerStarted = ref(false);
 const timerTimeout = ref(false);
@@ -17,7 +19,7 @@ function handleTimeout(): void {
   calcTypeResults();
 }
 
-const typeData = reactive({
+const typeData = reactive<Result>({
   falseKeys: 0,
   correctKeys: 0,
   keystrokes: 0,
@@ -98,7 +100,7 @@ async function selectLanguage(language: Language): Promise<void> {
 </script>
 
 <template>
-  <div class="container">
+  <div class="container" v-if="!timerTimeout">
     <LanguageSelection
       :selected-language="selectedLanguage"
       v-on:select-language="selectLanguage($event)"
@@ -121,6 +123,9 @@ async function selectLanguage(language: Language): Promise<void> {
       v-on:timeout="handleTimeout"
     />
   </div>
+  <Transition name="bounce">
+    <TypeResult v-if="timerTimeout" :result="typeData" />
+  </Transition>
 </template>
 
 <style lang="scss">
@@ -129,6 +134,23 @@ async function selectLanguage(language: Language): Promise<void> {
   &-words {
     width: 100%;
     @include flex-center;
+  }
+}
+.bounce-enter-active {
+  animation: bounce-in 0.5s;
+}
+.bounce-leave-active {
+  animation: bounce-in 0.5s reverse;
+}
+@keyframes bounce-in {
+  0% {
+    transform: scale(0);
+  }
+  50% {
+    transform: scale(1.25);
+  }
+  100% {
+    transform: scale(1);
   }
 }
 </style>
