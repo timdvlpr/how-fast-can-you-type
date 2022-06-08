@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
 import { Language } from "@/enums/Language";
+import AppButton from "../components/AppButton.vue";
 
 const emit = defineEmits<{
   (e: "selectLanguage", language: Language): void;
@@ -29,28 +30,24 @@ const currentSelectedLanguage = computed(() => {
 
 <template>
   <div class="selected-language">
-    <button
-      class="selected-language-btn"
+    <AppButton
+      :text="currentSelectedLanguage"
+      icon="language"
       :class="{ blink: !props.selectedLanguage }"
       @click="showLanguageOptions()"
       v-if="!languageOptionsVisible"
-    >
-      <font-awesome-icon icon="language" />
-      {{ currentSelectedLanguage }}
-    </button>
+    />
     <div class="selected-language-selection" v-else>
-      <button
-        :class="{ selected: selectedLanguage === Language.GERMAN }"
+      <AppButton
+        text="German"
         @click="selectLanguage(Language.GERMAN)"
-      >
-        German
-      </button>
-      <button
-        :class="{ selected: selectedLanguage === Language.ENGLISH }"
+        :selected="selectedLanguage === Language.GERMAN"
+      />
+      <AppButton
+        text="English"
         @click="selectLanguage(Language.ENGLISH)"
-      >
-        English
-      </button>
+        :selected="selectedLanguage === Language.ENGLISH"
+      />
     </div>
   </div>
 </template>
@@ -58,23 +55,9 @@ const currentSelectedLanguage = computed(() => {
 <style scoped lang="scss">
 .selected-language {
   @include flex-center;
-  margin-top: 2rem;
-  button {
-    background: $main;
-    padding: 0.5rem 2rem;
-    border-radius: 1rem;
-    color: $light;
-    border: 2px solid $shade;
-    margin: 0 0.5rem;
-    cursor: pointer;
-    transition: 0.25s;
-    &:hover {
-      background: $accent;
-    }
-  }
 }
-.selected {
-  background: $accent !important;
+.selected-language-selection {
+  @include flex-center;
 }
 .blink {
   animation: blink 2s infinite linear;

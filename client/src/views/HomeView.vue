@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { reactive, ref } from "vue";
+import { computed, reactive, ref } from "vue";
 import Timer from "../components/Timer.vue";
 import Type from "../components/Type.vue";
 import TypeResult from "../components/TypeResult.vue";
 import LanguageSelection from "../components/LanguageSelection.vue";
+import AppButton from "../components/AppButton.vue";
 import type { Language } from "@/enums/Language";
 import { getWords } from "@/services/wordService";
 import type { Result } from "@/interfaces/Result";
@@ -64,6 +65,23 @@ function calcTypeResults(): void {
     ((typeData.correctKeys / typeData.keystrokes) * 100).toFixed(2)
   );
 }
+function restart(): void {
+  reset();
+  const randomWords = getRandomElementsFromArray(words.value, 50);
+  generatedWords.value = generateCharacterArray(randomWords);
+}
+function reset(): void {
+  typeData.correctKeys = 0;
+  typeData.falseKeys = 0;
+  typeData.keystrokes = 0;
+  typeData.wordsPerMinute = 0;
+  typeData.accuracy = 0;
+
+  timerTimeout.value = false;
+  timerStarted.value = false;
+  animatedCharacters.value = [];
+  generatedWords.value = [];
+}
 
 const words = ref<string[]>([]);
 const generatedWords = ref<string[]>([]);
@@ -97,14 +115,40 @@ async function selectLanguage(language: Language): Promise<void> {
     console.log("error occurred: ", e);
   }
 }
+
+const checkForScore = ref(true);
+function setScoreCheckMode(): void {
+  checkForScore.value = !checkForScore.value;
+}
+const buttonTitle = computed(() => {
+  return checkForScore.value
+    ? "Disable checking for highscore"
+    : "Enable checking for highscore";
+});
 </script>
 
 <template>
   <div class="container" v-if="!timerTimeout">
-    <LanguageSelection
-      :selected-language="selectedLanguage"
-      v-on:select-language="selectLanguage($event)"
-    />
+    <div class="container-action-bar">
+      <AppButton
+        @click="setScoreCheckMode"
+        v-if="selectedLanguage"
+        :selected="checkForScore"
+        :title="buttonTitle"
+        text=""
+        icon="globe"
+      />
+      <LanguageSelection
+        :selected-language="selectedLanguage"
+        v-on:select-language="selectLanguage($event)"
+      />
+      <AppButton
+        v-if="selectedLanguage"
+        text=""
+        icon="rotate-right"
+        @click="restart"
+      />
+    </div>
 
     <div class="container-words">
       <Type
@@ -123,18 +167,29 @@ async function selectLanguage(language: Language): Promise<void> {
       v-on:timeout="handleTimeout"
     />
   </div>
+
   <Transition name="bounce">
-    <TypeResult v-if="timerTimeout" :result="typeData" />
+    <div class="container-timeout" v-if="timerTimeout">
+      <TypeResult :result="typeData" />
+      <AppButton v-on:click="restart" text="Restart" icon="rotate-right" />
+    </div>
   </Transition>
 </template>
 
 <style lang="scss">
 .container {
   @include flex-center-column;
+  &-action-bar {
+    @include flex-center;
+    margin-top: 2rem;
+  }
   &-words {
     width: 100%;
     @include flex-center;
   }
+}
+.container-timeout {
+  @include flex-center-column;
 }
 .bounce-enter-active {
   animation: bounce-in 0.5s;

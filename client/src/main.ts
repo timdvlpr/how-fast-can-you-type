@@ -10,10 +10,20 @@ import {
   faClock,
   faAngleUp,
   faLanguage,
+  faRotateRight,
+  faGlobe,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
-library.add(faStar, faKeyboard, faClock, faAngleUp, faLanguage);
+library.add(
+  faStar,
+  faKeyboard,
+  faClock,
+  faAngleUp,
+  faLanguage,
+  faRotateRight,
+  faGlobe
+);
 
 const app = createApp(App);
 
