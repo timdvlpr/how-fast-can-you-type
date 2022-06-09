@@ -63,29 +63,30 @@ exports.saveHighscore = async function (req: Request, res: Response, next) {
 
   const repository = AppDataSource.getRepository(Highscore);
   try {
-    const scores = await repository.findBy({ language: highscore.language });
+    const { amountOfScores } = await repository
+      .createQueryBuilder('highscore')
+      .select('COUNT(*)', 'amountOfScores')
+      .where('highscore.language = :language', { language: highscore.language })
+      .getRawOne();
 
-    let lowestScore = new Highscore();
-    if (scores.length === 0) {
-      lowestScore.score = 0;
-    }
-    lowestScore = scores[0];
-    for (let i = 1; i < scores.length; i++) {
-      if (Number(scores[i].score) < Number(lowestScore.score)) {
-        lowestScore = scores[i];
-      }
-    }
-
-    if (highscore.score <= lowestScore.score) {
-      return next(new BadRequestException('Score too low for leaderboard'));
-    }
-    if (scores.length >= 100) {
-      await repository.delete(lowestScore.id);
-    }
-    if (highscore.score > lowestScore.score || scores.length < 100) {
+    if (amountOfScores < 100) {
       const result = await repository.insert(highscore);
       res.status(201).json({ data: result.identifiers });
+      return;
     }
+
+    const { lowestScore } = await repository
+      .createQueryBuilder('highscore')
+      .select('MIN(highscore.score)', 'lowestScore')
+      .where('highscore.language = :language', { language: highscore.language })
+      .getRawOne();
+
+    if (highscore.score <= lowestScore) {
+      return next(new BadRequestException('Score too low for leaderboard'));
+    }
+
+    const result = await repository.insert(highscore);
+    res.status(201).json({ data: result.identifiers });
   } catch (e) {
     switch (e.code) {
       case '23505':
