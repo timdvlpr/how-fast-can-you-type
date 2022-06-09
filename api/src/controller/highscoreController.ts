@@ -100,3 +100,37 @@ exports.saveHighscore = async function (req: Request, res: Response, next) {
     }
   }
 };
+
+exports.checkIsHighscore = async function (req: Request, res: Response, next) {
+  const score = req.params.score;
+  const language = req.params.language as Language;
+
+  const repository = AppDataSource.getRepository(Highscore);
+
+  try {
+    const { amountOfScores } = await repository
+      .createQueryBuilder('highscore')
+      .select('COUNT(*)', 'amountOfScores')
+      .where('highscore.language = :language', { language: language })
+      .getRawOne();
+
+    if (amountOfScores < 100) {
+      res.status(200).json({ isHighscore: true, language });
+      return;
+    }
+
+    const { lowestScore } = await repository
+      .createQueryBuilder('highscore')
+      .select('MIN(highscore.score)', 'lowestScore')
+      .where('highscore.language = :language', { language: language })
+      .getRawOne();
+
+    if (score < lowestScore) {
+      return next(new BadRequestException('Score too low for leaderboard'));
+    }
+
+    res.status(200).json({ isHighscore: true, language });
+  } catch (e) {
+    return next(new ServerException(e.message));
+  }
+};
