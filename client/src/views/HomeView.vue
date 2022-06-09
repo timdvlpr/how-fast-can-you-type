@@ -5,19 +5,34 @@ import Type from "../components/Type.vue";
 import TypeResult from "../components/TypeResult.vue";
 import LanguageSelection from "../components/LanguageSelection.vue";
 import AppButton from "../components/AppButton.vue";
+import HighscoreBanner from "../components/HighscoreBanner.vue";
 import type { Language } from "@/enums/Language";
-import { getWords } from "@/services/wordService";
 import type { Result } from "@/interfaces/Result";
+import { getWords } from "@/services/wordService";
+import { checkIsHighscore } from "@/services/highscoreService";
 
 const timerStarted = ref(false);
 const timerTimeout = ref(false);
+const isHighscore = ref(false);
 
 function handleTypeStart(): void {
   timerStarted.value = true;
 }
-function handleTimeout(): void {
+async function handleTimeout(): Promise<void> {
   timerTimeout.value = true;
   calcTypeResults();
+  if (!selectedLanguage.value || !checkForScore.value) {
+    return;
+  }
+  try {
+    const response = await checkIsHighscore(
+      selectedLanguage.value,
+      typeData.wordsPerMinute
+    );
+    isHighscore.value = response.isHighscore;
+  } catch (e) {
+    console.log("error occurred: ", e);
+  }
 }
 
 const typeData = reactive<Result>({
@@ -79,6 +94,7 @@ function reset(): void {
 
   timerTimeout.value = false;
   timerStarted.value = false;
+  isHighscore.value = false;
   animatedCharacters.value = [];
   generatedWords.value = [];
 }
@@ -173,6 +189,7 @@ const buttonTitle = computed(() => {
 
     <Transition name="bounce">
       <div class="container-timeout" v-if="timerTimeout">
+        <HighscoreBanner v-if="isHighscore" />
         <TypeResult :result="typeData" />
         <AppButton v-on:click="restart" text="Restart" icon="rotate-right" />
       </div>
@@ -183,9 +200,9 @@ const buttonTitle = computed(() => {
 <style lang="scss">
 .container {
   @include flex-center-column;
+  padding: 2rem 0;
   &-action-bar {
     @include flex-center;
-    margin-top: 2rem;
   }
   &-words {
     width: 100%;
@@ -194,6 +211,7 @@ const buttonTitle = computed(() => {
 }
 .container-timeout {
   @include flex-center-column;
+  padding: 2rem 0;
 }
 .bounce-enter-active {
   animation: bounce-in 0.5s;
