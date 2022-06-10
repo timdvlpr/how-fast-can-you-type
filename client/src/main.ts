@@ -14,6 +14,7 @@ import {
   faGlobe,
   faUser,
   faCircleExclamation,
+  faCircleCheck,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
@@ -26,7 +27,8 @@ library.add(
   faRotateRight,
   faGlobe,
   faUser,
-  faCircleExclamation
+  faCircleExclamation,
+  faCircleCheck
 );
 
 const app = createApp(App);

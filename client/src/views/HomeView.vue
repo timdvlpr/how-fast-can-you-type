@@ -12,6 +12,9 @@ import type { Result } from "@/interfaces/Result";
 import type { Highscore } from "@/interfaces/Highscore";
 import { getWords } from "@/services/wordService";
 import { checkIsHighscore, saveHighscore } from "@/services/highscoreService";
+import { useAlertStore } from "@/stores/alertStore";
+
+const { addAlert } = useAlertStore();
 
 const timerStarted = ref(false);
 const timerTimeout = ref(false);
@@ -31,8 +34,10 @@ async function handleTimeout(): Promise<void> {
       typeData.wordsPerMinute
     );
     isHighscore.value = response.isHighscore;
-  } catch (e) {
-    console.log("error occurred: ", e);
+  } catch (e: unknown) {
+    if (e instanceof Error) {
+      addAlert({ message: e.message, type: "error" });
+    }
   }
 }
 
@@ -88,9 +93,15 @@ async function saveHighscoreToLeaderboard(username: string): Promise<void> {
   };
   try {
     await saveHighscore(data);
+    addAlert({
+      message: "Highscore successfully added to leaderboard",
+      type: "success",
+    });
     restart();
-  } catch (e) {
-    console.log("error occurred: ", e);
+  } catch (e: unknown) {
+    if (e instanceof Error) {
+      addAlert({ message: e.message, type: "error" });
+    }
   }
 }
 function restart(): void {
@@ -139,8 +150,10 @@ async function selectLanguage(language: Language): Promise<void> {
     const randomWords = getRandomElementsFromArray(fetchedWords, 50);
     generatedWords.value = generateCharacterArray(randomWords);
     selectedLanguage.value = language;
-  } catch (e) {
-    console.log("error occurred: ", e);
+  } catch (e: unknown) {
+    if (e instanceof Error) {
+      addAlert({ message: e.message, type: "error" });
+    }
   }
 }
 
