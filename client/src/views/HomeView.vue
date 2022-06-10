@@ -7,6 +7,7 @@ import LanguageSelection from "../components/LanguageSelection.vue";
 import AppButton from "../components/AppButton.vue";
 import HighscoreBanner from "../components/HighscoreBanner.vue";
 import SaveHighscoreModal from "@/components/SaveHighscoreModal.vue";
+import FadeUpTransition from "@/components/FadeUpTransition.vue";
 import type { Language } from "@/enums/Language";
 import type { Result } from "@/interfaces/Result";
 import type { Highscore } from "@/interfaces/Highscore";
@@ -99,6 +100,7 @@ async function saveHighscoreToLeaderboard(username: string): Promise<void> {
     });
     restart();
   } catch (e: unknown) {
+    closeModal();
     if (e instanceof Error) {
       addAlert({ message: e.message, type: "error" });
     }
@@ -119,6 +121,7 @@ function reset(): void {
   timerTimeout.value = false;
   timerStarted.value = false;
   isHighscore.value = false;
+  showHighscoreModal.value = false;
   animatedCharacters.value = [];
   generatedWords.value = [];
 }
@@ -202,14 +205,16 @@ function closeModal(): void {
         </div>
 
         <div class="container-words">
-          <Type
-            v-if="selectedLanguage"
-            :words="generatedWords"
-            :animated-characters="animatedCharacters"
-            :timer-timeout="timerTimeout"
-            v-on:keyPressed="handleKeypress"
-            v-on:typingStarted="handleTypeStart"
-          />
+          <FadeUpTransition>
+            <Type
+              v-if="selectedLanguage"
+              :words="generatedWords"
+              :animated-characters="animatedCharacters"
+              :timer-timeout="timerTimeout"
+              v-on:keyPressed="handleKeypress"
+              v-on:typingStarted="handleTypeStart"
+            />
+          </FadeUpTransition>
         </div>
 
         <Timer
@@ -274,7 +279,7 @@ function closeModal(): void {
     transform: scale(0);
   }
   50% {
-    transform: scale(1.25);
+    transform: scale(1.1);
   }
   100% {
     transform: scale(1);

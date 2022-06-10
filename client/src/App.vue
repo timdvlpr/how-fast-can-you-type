@@ -3,6 +3,7 @@ import { RouterView } from "vue-router";
 import Header from "./components/Header.vue";
 import AppAlert from "@/components/AppAlert.vue";
 import { useAlertStore } from "@/stores/alertStore";
+import FadeUpTransition from "@/components/FadeUpTransition.vue";
 
 const { globalAlerts } = useAlertStore();
 </script>
@@ -18,9 +19,9 @@ const { globalAlerts } = useAlertStore();
       />
     </TransitionGroup>
     <RouterView v-slot="{ Component }">
-      <Transition name="fade">
+      <FadeUpTransition>
         <component :is="Component"></component>
-      </Transition>
+      </FadeUpTransition>
     </RouterView>
   </main>
 </template>
@@ -34,6 +35,7 @@ main {
   top: 0;
   left: 0;
   width: 100%;
+  z-index: 90;
 }
 .alert-enter-active,
 .alert-leave-active {
@@ -43,12 +45,5 @@ main {
 .alert-leave-to {
   opacity: 0;
   transform: translateY(-30px);
-}
-.fade-enter-active {
-  transition: all 0.25s ease;
-}
-.fade-enter-from {
-  opacity: 0;
-  transform: translateY(5rem);
 }
 </style>
