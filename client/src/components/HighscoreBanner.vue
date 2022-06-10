@@ -1,10 +1,18 @@
 <script setup lang="ts">
 import AppButton from "@/components/AppButton.vue";
+
+const emit = defineEmits<{
+  (e: "save-to-leaderboard"): void;
+}>();
+
+function saveToLeaderboard() {
+  emit("save-to-leaderboard");
+}
 </script>
 
 <template>
   <h1>Highscore!</h1>
-  <AppButton text="Save to leaderboard" />
+  <AppButton text="Save to leaderboard" @click="saveToLeaderboard" />
 </template>
 
 <style scoped lang="scss">

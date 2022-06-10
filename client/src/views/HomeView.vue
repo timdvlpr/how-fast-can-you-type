@@ -6,15 +6,16 @@ import TypeResult from "../components/TypeResult.vue";
 import LanguageSelection from "../components/LanguageSelection.vue";
 import AppButton from "../components/AppButton.vue";
 import HighscoreBanner from "../components/HighscoreBanner.vue";
+import SaveHighscoreModal from "@/components/SaveHighscoreModal.vue";
 import type { Language } from "@/enums/Language";
 import type { Result } from "@/interfaces/Result";
+import type { Highscore } from "@/interfaces/Highscore";
 import { getWords } from "@/services/wordService";
-import { checkIsHighscore } from "@/services/highscoreService";
+import { checkIsHighscore, saveHighscore } from "@/services/highscoreService";
 
 const timerStarted = ref(false);
 const timerTimeout = ref(false);
 const isHighscore = ref(false);
-
 function handleTypeStart(): void {
   timerStarted.value = true;
 }
@@ -42,7 +43,6 @@ const typeData = reactive<Result>({
   wordsPerMinute: 0,
   accuracy: 0,
 });
-
 function handleKeypress(key: string): void {
   if (key === "Shift") {
     return;
@@ -80,6 +80,19 @@ function calcTypeResults(): void {
     ((typeData.correctKeys / typeData.keystrokes) * 100).toFixed(2)
   );
 }
+async function saveHighscoreToLeaderboard(username: string): Promise<void> {
+  const data: Highscore = {
+    score: typeData.wordsPerMinute,
+    username: username,
+    language: selectedLanguage.value!,
+  };
+  try {
+    await saveHighscore(data);
+    restart();
+  } catch (e) {
+    console.log("error occurred: ", e);
+  }
+}
 function restart(): void {
   reset();
   const randomWords = getRandomElementsFromArray(words.value, 50);
@@ -103,7 +116,6 @@ const words = ref<string[]>([]);
 const generatedWords = ref<string[]>([]);
 const animatedCharacters = ref<string[]>([]);
 const selectedLanguage = ref<Language | null>(null);
-
 function generateCharacterArray(words: string[]): string[] {
   const array: string[] = [];
   words.forEach((word) => array.push(...word, " "));
@@ -141,6 +153,14 @@ const buttonTitle = computed(() => {
     ? "Disable checking for highscore"
     : "Enable checking for highscore";
 });
+
+const showHighscoreModal = ref(false);
+function showModal(): void {
+  showHighscoreModal.value = true;
+}
+function closeModal(): void {
+  showHighscoreModal.value = false;
+}
 </script>
 
 <template>
@@ -189,7 +209,19 @@ const buttonTitle = computed(() => {
 
     <Transition name="bounce">
       <div class="container-timeout" v-if="timerTimeout">
-        <HighscoreBanner v-if="isHighscore" />
+        <HighscoreBanner
+          v-if="isHighscore"
+          v-on:save-to-leaderboard="showModal"
+        />
+        <Teleport to="body">
+          <Transition name="fade">
+            <SaveHighscoreModal
+              v-if="showHighscoreModal"
+              v-on:close-modal="closeModal"
+              v-on:submit-form="saveHighscoreToLeaderboard"
+            />
+          </Transition>
+        </Teleport>
         <TypeResult :result="typeData" />
         <AppButton v-on:click="restart" text="Restart" icon="rotate-right" />
       </div>
@@ -212,6 +244,14 @@ const buttonTitle = computed(() => {
 .container-timeout {
   @include flex-center-column;
   padding: 2rem 0;
+}
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.25s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
 }
 .bounce-enter-active {
   animation: bounce-in 0.5s;
