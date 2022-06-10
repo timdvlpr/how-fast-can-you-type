@@ -12,6 +12,8 @@ import {
   faLanguage,
   faRotateRight,
   faGlobe,
+  faUser,
+  faCircleExclamation,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
@@ -22,7 +24,9 @@ library.add(
   faAngleUp,
   faLanguage,
   faRotateRight,
-  faGlobe
+  faGlobe,
+  faUser,
+  faCircleExclamation
 );
 
 const app = createApp(App);
