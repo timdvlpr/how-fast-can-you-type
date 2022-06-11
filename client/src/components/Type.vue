@@ -2,8 +2,8 @@
 import { ref, watch } from "vue";
 
 const emit = defineEmits<{
-  (e: "typingStarted"): void;
-  (e: "keyPressed", key: string): void;
+  (e: "typing-started"): void;
+  (e: "key-pressed", key: string): void;
 }>();
 
 const props = defineProps<{
@@ -14,11 +14,11 @@ const props = defineProps<{
 
 const wordsWrapperRef = ref<HTMLDivElement | null>(null);
 
-function handleKeyPress(key: KeyboardEvent): void {
+function handleKeyPress(event: KeyboardEvent): void {
   if (props.timerTimeout) {
     return;
   }
-  emit("keyPressed", key.key);
+  emit("key-pressed", event.key);
 }
 function refocus(): void {
   if (props.timerTimeout) {
@@ -44,7 +44,7 @@ watch(wordsWrapperRef, () => {
     ref="wordsWrapperRef"
     tabindex="0"
     @blur="refocus()"
-    @keydown.once="emit('typingStarted')"
+    @keydown.once="emit('typing-started')"
     @keydown="handleKeyPress($event)"
   >
     <div class="words">

@@ -211,8 +211,8 @@ function closeModal(): void {
               :words="generatedWords"
               :animated-characters="animatedCharacters"
               :timer-timeout="timerTimeout"
-              v-on:keyPressed="handleKeypress"
-              v-on:typingStarted="handleTypeStart"
+              v-on:key-pressed="handleKeypress"
+              v-on:typing-started="handleTypeStart"
             />
           </FadeUpTransition>
         </div>
