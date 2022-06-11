@@ -4,7 +4,7 @@ import { Language } from "@/enums/Language";
 import AppButton from "../components/AppButton.vue";
 
 const emit = defineEmits<{
-  (e: "select-language", language: Language): void;
+  (e: "selectLanguage", language: Language): void;
 }>();
 
 const props = defineProps<{
@@ -18,7 +18,7 @@ function showLanguageOptions(): void {
 }
 function selectLanguage(language: Language): void {
   languageOptionsVisible.value = false;
-  emit("select-language", language);
+  emit("selectLanguage", language);
 }
 
 const currentSelectedLanguage = computed(() => {
