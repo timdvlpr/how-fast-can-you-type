@@ -15,6 +15,7 @@ import {
   faUser,
   faCircleExclamation,
   faCircleCheck,
+  faCalendarDay,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
@@ -28,7 +29,8 @@ library.add(
   faGlobe,
   faUser,
   faCircleExclamation,
-  faCircleCheck
+  faCircleCheck,
+  faCalendarDay
 );
 
 const app = createApp(App);
