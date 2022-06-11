@@ -9,7 +9,7 @@ const props = defineProps<{
 
 <template>
   <div class="highscore-list">
-    <TransitionGroup name="highscore">
+    <TransitionGroup name="highscore" appear>
       <div
         class="highscore-list-item"
         v-for="(highscore, index) in props.highscores"

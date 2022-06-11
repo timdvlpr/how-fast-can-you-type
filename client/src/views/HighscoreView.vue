@@ -9,6 +9,7 @@ import { Language } from "@/enums/Language";
 
 const highscores = ref<Highscore[]>([]);
 const allScoresFetched = ref(false);
+const loading = ref(true);
 const { addAlert } = useAlertStore();
 
 const take = 10;
@@ -17,6 +18,7 @@ let skip = 0;
 
 async function loadHighscores(): Promise<void> {
   try {
+    loading.value = true;
     const response = await getHighscoresOfLanguage(
       selectedLanguage.value,
       take,
@@ -25,6 +27,7 @@ async function loadHighscores(): Promise<void> {
     highscores.value = [...highscores.value, ...response.data];
     count = response.count;
     skip += take;
+    loading.value = false;
     if (highscores.value.length === count) {
       allScoresFetched.value = true;
     }
@@ -49,9 +52,7 @@ function reset(): void {
   allScoresFetched.value = false;
 }
 
-onMounted(() => {
-  loadHighscores();
-});
+onMounted(() => loadHighscores());
 </script>
 
 <template>
@@ -70,9 +71,16 @@ onMounted(() => {
           @click="selectLanguage(Language.ENGLISH)"
         />
       </div>
-      <HighscoreList :highscores="highscores" />
+      <HighscoreList :highscores="highscores" v-if="highscores.length > 0" />
+      <div
+        class="no-highscores-message"
+        v-if="highscores.length === 0 && !loading"
+      >
+        <font-awesome-icon icon="circle-exclamation" />
+        <p>No highscores for this language registered</p>
+      </div>
       <AppButton
-        v-if="!allScoresFetched"
+        v-if="!allScoresFetched && highscores.length > 0"
         @click="loadHighscores"
         text="Load more"
       />
@@ -98,6 +106,15 @@ section {
     align-items: center;
     justify-content: flex-start;
     width: 100%;
+  }
+}
+.no-highscores-message {
+  @include flex-center;
+  color: $light;
+  margin: 1rem 0;
+  svg {
+    color: $error;
+    margin-right: 0.25rem;
   }
 }
 </style>
