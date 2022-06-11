@@ -31,20 +31,33 @@ header {
     position: relative;
     display: inline-block;
     &:after {
+      display: none;
       content: "|";
       position: absolute;
       top: -0.1rem;
       right: -1rem;
       opacity: 25%;
       animation: 1s fadeInOut infinite;
+      @include for-tablet-landscape-up {
+        display: block;
+      }
     }
   }
   nav {
     margin-top: 2rem;
     ul {
-      @include flex-center;
+      @include flex-center-column;
       padding: 0;
+      @include for-phone-only {
+        flex-direction: row;
+      }
       li {
+        &:first-child {
+          margin-bottom: 2rem;
+          @include for-phone-only {
+            margin-bottom: 0;
+          }
+        }
         a {
           border: 2px solid $shade;
           background: $dark;
