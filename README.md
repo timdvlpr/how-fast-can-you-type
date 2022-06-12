@@ -11,6 +11,12 @@ A web application for testing your typing speed.
 - Express
 
 
+## Screenshots
+![Home](https://user-images.githubusercontent.com/81222680/173250555-65f62bb9-1021-448d-9309-7f3d69f32799.png)
+![TypeResult](https://user-images.githubusercontent.com/81222680/173250085-21bc7105-f968-4d7b-a745-715062f388b5.png)
+![Highscores](https://user-images.githubusercontent.com/81222680/173250205-049ad5cc-1bb6-4ccf-8bdd-714ec20d862e.png)
+
+
 ## Info
 When starting the app for the first time with ``docker-compose`` postgres will
 create the database for you. This means that it will not accept incoming
