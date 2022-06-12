@@ -9,10 +9,7 @@ const cors = require('cors');
 app.use(express.json());
 app.use(
   cors({
-    origin:
-      process.env.NODE_ENV === 'production'
-        ? 'productionOrigin'
-        : 'http://localhost:3000',
+    origin: 'http://localhost:3000',
     optionsSuccessStatus: 200
   })
 );
