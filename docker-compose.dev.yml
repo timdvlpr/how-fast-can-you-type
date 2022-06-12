@@ -1,0 +1,22 @@
+version: '3.7'
+
+services:
+  backend:
+    container_name: backend-dev
+    build:
+      context: ./api
+      target: development
+      dockerfile: Dockerfile
+    volumes:
+      - './api:/app'
+  frontend:
+    container_name: frontend-dev
+    build:
+      context: ./client
+      target: development
+      dockerfile: Dockerfile
+    ports:
+      - '3000:3000'
+    volumes:
+      - './client:/app'
+      - '/app/node_modules'

@@ -16,33 +16,28 @@ services:
       - db
 
   backend:
+    container_name: backend
     build:
       context: ./api
-      target: development
+      target: production
+      dockerfile: Dockerfile-prod
     restart: unless-stopped
-    container_name: backend
     depends_on:
       - postgres
     ports:
       - '5000:5000'
-    volumes:
-      - './api:/app'
     networks:
       - db
 
   frontend:
+    container_name: frontend
     build:
       context: ./client
-      target: development
+      target: production
+      dockerfile: Dockerfile-prod
     restart: unless-stopped
-    container_name: frontend
     depends_on:
       - backend
-    ports:
-      - '3000:3000'
-    volumes:
-      - './client:/app'
-      - '/app/node_modules'
 
 volumes:
   dbdata:
