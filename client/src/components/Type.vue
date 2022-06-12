@@ -2,7 +2,6 @@
 import { ref, watch } from "vue";
 
 const emit = defineEmits<{
-  (e: "typing-started"): void;
   (e: "key-pressed", key: string): void;
 }>();
 
@@ -44,7 +43,6 @@ watch(wordsWrapperRef, () => {
     ref="wordsWrapperRef"
     tabindex="0"
     @blur="refocus()"
-    @keydown.once="emit('typing-started')"
     @keydown="handleKeyPress($event)"
   >
     <div class="words">

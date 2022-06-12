@@ -19,10 +19,8 @@ const { addAlert } = useAlertStore();
 
 const timerStarted = ref(false);
 const timerTimeout = ref(false);
+const timerReset = ref(false);
 const isHighscore = ref(false);
-function handleTypeStart(): void {
-  timerStarted.value = true;
-}
 async function handleTimeout(): Promise<void> {
   timerTimeout.value = true;
   calcTypeResults();
@@ -50,6 +48,11 @@ const typeData = reactive<Result>({
   accuracy: 0,
 });
 function handleKeypress(key: string): void {
+  if (!timerStarted.value) {
+    timerStarted.value = true;
+    timerReset.value = false;
+  }
+
   if (key === "Shift") {
     return;
   }
@@ -120,6 +123,7 @@ function reset(): void {
 
   timerTimeout.value = false;
   timerStarted.value = false;
+  timerReset.value = true;
   isHighscore.value = false;
   showHighscoreModal.value = false;
   animatedCharacters.value = [];
@@ -150,6 +154,7 @@ async function selectLanguage(language: Language): Promise<void> {
   try {
     const fetchedWords = await getWords(language);
     words.value = fetchedWords;
+    reset();
     const randomWords = getRandomElementsFromArray(fetchedWords, 50);
     generatedWords.value = generateCharacterArray(randomWords);
     selectedLanguage.value = language;
@@ -212,7 +217,6 @@ function closeModal(): void {
               :animated-characters="animatedCharacters"
               :timer-timeout="timerTimeout"
               v-on:key-pressed="handleKeypress"
-              v-on:typing-started="handleTypeStart"
             />
           </FadeUpTransition>
         </div>
@@ -220,6 +224,7 @@ function closeModal(): void {
         <Timer
           v-if="selectedLanguage"
           :timer-started="timerStarted"
+          :timer-reset="timerReset"
           v-on:timeout="handleTimeout"
         />
       </div>

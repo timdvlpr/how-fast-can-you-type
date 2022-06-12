@@ -7,13 +7,16 @@ const emit = defineEmits<{
 
 const props = defineProps<{
   timerStarted: boolean;
+  timerReset: boolean;
 }>();
 
 const minutes = ref(1);
 const seconds = ref(0);
 
+let timerInterval: ReturnType<typeof setInterval>;
+
 function startTimer(): void {
-  const timerInterval = setInterval(() => {
+  timerInterval = setInterval(() => {
     if (seconds.value === 0) {
       minutes.value--;
       seconds.value = 59;
@@ -25,6 +28,12 @@ function startTimer(): void {
       emit("timeout");
     }
   }, 1000);
+}
+
+function resetTimer(): void {
+  clearInterval(timerInterval);
+  minutes.value = 1;
+  seconds.value = 0;
 }
 
 const computedMinutes = computed(() => {
@@ -44,6 +53,12 @@ watch(
     if (newValue) {
       startTimer();
     }
+  }
+);
+watch(
+  () => props.timerReset,
+  (newValue) => {
+    if (newValue) resetTimer();
   }
 );
 </script>
